@@ -16,24 +16,25 @@
  * limitations under the License.
  */
 
-package com.agon.resources;
+package com.agon.core.guice;
 
-import com.codahale.metrics.annotation.Timed;
+import com.netflix.governator.lifecycle.LifecycleManager;
+import io.dropwizard.lifecycle.Managed;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+public class ManagedLifecycleManager implements Managed {
+    private final LifecycleManager manager;
 
-@Path("/test/")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class TestResource {
-    @GET
-    @Timed
-    public Response get() {
-        return Response.ok().build();
+    public ManagedLifecycleManager(LifecycleManager manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public void start() throws Exception {
+
+    }
+
+    @Override
+    public void stop() throws Exception {
+        manager.close();
     }
 }

@@ -6,4 +6,6 @@ server:
     - type: http
       port: 7071
 
-name : agon
+cassandra:
+  clusterName: "agon"
+  contactPoints: ["localhost"]

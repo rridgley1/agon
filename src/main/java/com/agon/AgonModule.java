@@ -16,24 +16,24 @@
  * limitations under the License.
  */
 
-package com.agon.resources;
+package com.agon;
 
-import com.codahale.metrics.annotation.Timed;
+import com.datastax.driver.core.Cluster;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.netflix.governator.guice.lazy.LazySingleton;
+import io.dropwizard.setup.Environment;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-@Path("/test/")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class TestResource {
-    @GET
-    @Timed
-    public Response get() {
-        return Response.ok().build();
+public class AgonModule extends AbstractModule {
+    @Override
+    protected void configure() {
+
+    }
+
+    @Provides
+    @LazySingleton
+    public Cluster provideCluster(AgonConfiguration configuration, Environment environment) {
+        return configuration.getCassandraFactory().build(environment);
     }
 }

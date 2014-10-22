@@ -18,6 +18,8 @@
 
 package com.agon;
 
+import com.agon.core.guice.GuiceBundle;
+import com.agon.resources.ActionResource;
 import com.agon.resources.TestResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -29,12 +31,18 @@ public class MainApplication extends Application<AgonConfiguration> {
     }
 
     @Override
-    public void initialize(Bootstrap<AgonConfiguration> agonConfigurationBootstrap) {
+    public void initialize(Bootstrap<AgonConfiguration> bootstrap) {
+        GuiceBundle<AgonConfiguration> guiceBundle = GuiceBundle.<AgonConfiguration>newBuilder()
+                .addModule(new AgonModule())
+                .setConfigClass(AgonConfiguration.class)
+                .build();
 
+        bootstrap.addBundle(guiceBundle);
     }
 
     @Override
     public void run(AgonConfiguration configuration, Environment environment) throws Exception {
-        environment.jersey().register(new TestResource());
+        environment.jersey().register(ActionResource.class);
+        environment.jersey().register(TestResource.class);
     }
 }

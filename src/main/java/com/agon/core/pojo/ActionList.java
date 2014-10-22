@@ -16,27 +16,41 @@
  * limitations under the License.
  */
 
-package com.agon;
+package com.agon.core.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.Configuration;
-import org.stuartgunter.dropwizard.cassandra.CassandraFactory;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
-public class AgonConfiguration extends Configuration {
-    @Valid
-    @NotNull
-    private CassandraFactory cassandra = new CassandraFactory();
+@JsonDeserialize(builder = ActionList.Builder.class)
+public class ActionList {
+    @JsonProperty("actions")
+    private List<Action> actions;
 
-    @JsonProperty("cassandra")
-    public CassandraFactory getCassandraFactory() {
-        return cassandra;
+    private ActionList(Builder builder) {
+        actions = builder.actions;
     }
 
-    @JsonProperty("cassandra")
-    public void setCassandraFactory(CassandraFactory cassandra) {
-        this.cassandra = cassandra;
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
+    public static final class Builder {
+        private List<Action> actions;
+
+        public Builder() {
+        }
+
+        public Builder actions(List<Action> actions) {
+            this.actions = actions;
+            return this;
+        }
+
+        public ActionList build() {
+            return new ActionList(this);
+        }
+    }
+
+    public List<Action> getActions() {
+        return actions;
     }
 }
