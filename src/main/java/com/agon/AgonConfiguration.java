@@ -18,23 +18,17 @@
 
 package com.agon;
 
-import com.agon.resources.TestResource;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.Configuration;
 
-public class MainApplication extends Application<AgonConfiguration> {
-    public static void main(String[] args) throws Exception {
-        new MainApplication().run(args);
-    }
+import javax.validation.constraints.NotNull;
 
-    @Override
-    public void initialize(Bootstrap<AgonConfiguration> agonConfigurationBootstrap) {
+public class AgonConfiguration extends Configuration {
+    @JsonProperty
+    @NotNull
+    private String name;
 
-    }
-
-    @Override
-    public void run(AgonConfiguration configuration, Environment environment) throws Exception {
-        environment.jersey().register(new TestResource());
+    public String getName() {
+        return name;
     }
 }

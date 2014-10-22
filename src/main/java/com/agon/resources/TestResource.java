@@ -16,25 +16,26 @@
  * limitations under the License.
  */
 
-package com.agon;
+package com.agon.resources;
 
-import com.agon.resources.TestResource;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import com.codahale.metrics.annotation.Timed;
 
-public class MainApplication extends Application<AgonConfiguration> {
-    public static void main(String[] args) throws Exception {
-        new MainApplication().run(args);
-    }
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
-    @Override
-    public void initialize(Bootstrap<AgonConfiguration> agonConfigurationBootstrap) {
-
-    }
-
-    @Override
-    public void run(AgonConfiguration configuration, Environment environment) throws Exception {
-        environment.jersey().register(new TestResource());
+@Path("/test/")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class TestResource {
+    @GET
+    @Timed
+    @Path("")
+    public Response get() {
+        return Response.ok().build();
     }
 }
