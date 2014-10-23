@@ -16,41 +16,46 @@
  * limitations under the License.
  */
 
-package com.agon.core.pojo;
+package com.agon.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import java.util.UUID;
 
-import java.util.List;
+public class EventType {
+    private UUID id;
+    private String name;
 
-@JsonDeserialize(builder = ActionList.Builder.class)
-public class ActionList {
-    @JsonProperty("actions")
-    private List<Action> actions;
-
-    private ActionList(Builder builder) {
-        actions = builder.actions;
+    private EventType(Builder builder) {
+        id = builder.id;
+        name = builder.name;
     }
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static final class Builder {
-        private List<Action> actions;
+        private UUID id;
+        private String name;
 
         public Builder() {
         }
 
-        public Builder actions(List<Action> actions) {
-            this.actions = actions;
+        public Builder id(UUID id) {
+            this.id = id;
             return this;
         }
 
-        public ActionList build() {
-            return new ActionList(this);
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EventType build() {
+            return new EventType(this);
         }
     }
 
-    public List<Action> getActions() {
-        return actions;
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -16,14 +16,16 @@
  * limitations under the License.
  */
 
-package com.agon.core.pojo;
+package com.agon.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import java.io.Serializable;
+
 @JsonDeserialize(builder = Action.Builder.class)
-public class Action {
+public class Action implements Serializable {
     @JsonProperty
     private long playerId;
     @JsonProperty

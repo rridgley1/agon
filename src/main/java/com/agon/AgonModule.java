@@ -18,9 +18,14 @@
 
 package com.agon;
 
+import com.agon.core.repository.ActionRepository;
+import com.agon.core.repository.PlayerRepository;
+import com.agon.core.repository.cassandra.CassandraActionRepository;
+import com.agon.core.repository.cassandra.CassandraPlayerRepository;
 import com.datastax.driver.core.Cluster;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.name.Named;
 import com.netflix.governator.guice.lazy.LazySingleton;
 import io.dropwizard.setup.Environment;
 
@@ -28,12 +33,19 @@ import io.dropwizard.setup.Environment;
 public class AgonModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(ActionRepository.class).to(CassandraActionRepository.class);
+        bind(PlayerRepository.class).to(CassandraPlayerRepository.class);
+    }
 
+    @Provides
+    @Named("keyspace")
+    public String provideKeyspace(AgonConfiguration configuration) {
+        return configuration.getCassandraFactory().getKeyspace();
     }
 
     @Provides
     @LazySingleton
     public Cluster provideCluster(AgonConfiguration configuration, Environment environment) {
-        return configuration.getCassandraFactory().build(environment);
+        return  configuration.getCassandraFactory().build(environment);
     }
 }

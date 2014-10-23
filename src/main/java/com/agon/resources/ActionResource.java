@@ -18,9 +18,9 @@
 
 package com.agon.resources;
 
-import com.agon.core.pojo.ActionList;
+import com.agon.core.domain.ActionList;
+import com.agon.core.service.ActionService;
 import com.codahale.metrics.annotation.Timed;
-import com.datastax.driver.core.Cluster;
 import com.google.inject.Inject;
 
 import javax.ws.rs.Consumes;
@@ -34,17 +34,19 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ActionResource {
-    protected final Cluster cluster;
+
+    private final ActionService actionService;
 
     @Inject
-    public ActionResource(Cluster cluster) {
-        this.cluster = cluster;
+    public ActionResource(ActionService actionService) {
+        this.actionService = actionService;
     }
 
     @POST
     @Timed
     public Response post(ActionList actions) {
-
+        actionService.addAndEvaluateActions(actions);
+        // load achievements that have rules with events just received and increment each player
         return Response.ok().build();
     }
 

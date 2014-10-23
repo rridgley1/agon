@@ -9,3 +9,4 @@ server:
 cassandra:
   clusterName: "agon"
   contactPoints: ["localhost"]
+  keyspace: "agon"
