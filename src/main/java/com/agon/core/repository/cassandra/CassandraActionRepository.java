@@ -40,7 +40,7 @@ public class CassandraActionRepository implements ActionRepository {
     public CassandraActionRepository(Cluster cluster, @Named("keyspace") String keyspace) {
         this.cluster = cluster;
         this.keyspace = keyspace;
-        session = this.cluster.connect(this.keyspace);
+        this.session = this.cluster.connect(this.keyspace);
     }
 
     @Override
@@ -53,11 +53,11 @@ public class CassandraActionRepository implements ActionRepository {
         BatchStatement batchStatement = new BatchStatement();
         String[] names = {"player_id", "event", "event_type", "event_time", "value"};
 
-        for(Action a : items) {
+        for (Action a : items) {
             Object[] values = {a.getPlayerId(), a.getEvent(), a.getEventType(), UUIDs.timeBased(), a.getValue()};
             Statement statement = QueryBuilder
                     .insertInto(keyspace, "actions")
-                    .values(names, values );
+                    .values(names, values);
             batchStatement.add(statement);
         }
         session.execute(batchStatement);

@@ -18,7 +18,5 @@
 
 package com.agon.core.domain;
 
-public class Rule {
-    private String event;
-    private long count;
+public class Achievement {
 }

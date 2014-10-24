@@ -17,3 +17,21 @@ CREATE TABLE player_event_counts
   event varchar,
   PRIMARY KEY (player_id, event)
 );
+
+CREATE TABLE badges
+(
+  id UUID,
+  name varchar,
+  url varchar,
+  description varchar,
+  retired boolean,
+  primary key (id, name)
+);
+
+CREATE TABLE player_badges
+(
+  player_id int,
+  badge_id UUID,
+  unlocked timestamp,
+  primary key (player_id, badge_id)
+);

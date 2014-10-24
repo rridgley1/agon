@@ -21,7 +21,6 @@ package com.agon;
 import com.agon.core.guice.GuiceBundle;
 import com.agon.resources.ActionResource;
 import com.agon.resources.TestResource;
-import com.datastax.driver.core.Cluster;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;

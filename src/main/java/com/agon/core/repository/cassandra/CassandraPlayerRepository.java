@@ -41,7 +41,7 @@ public class CassandraPlayerRepository implements PlayerRepository {
     }
 
     @Override
-    public void increment(long playerId, String event, long count) {
+    public void incrementEvent(long playerId, String event, long count) {
         Update updateStatement = QueryBuilder.update("player_event_counts");
         updateStatement.where(QueryBuilder.eq("player_id", playerId)).and(QueryBuilder.eq("event", event));
         updateStatement.with(QueryBuilder.incr("counter_value", count));

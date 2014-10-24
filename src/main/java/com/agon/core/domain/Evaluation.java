@@ -38,7 +38,8 @@ public class Evaluation {
         private String event;
         private long count;
 
-        public Builder() {}
+        public Builder() {
+        }
 
         public Builder playerId(long playerId) {
             this.playerId = playerId;

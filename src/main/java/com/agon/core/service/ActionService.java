@@ -20,42 +20,34 @@ package com.agon.core.service;
 
 import com.agon.core.domain.Action;
 import com.agon.core.domain.ActionList;
-import com.agon.core.domain.ActionResult;
 import com.agon.core.domain.Evaluation;
 import com.agon.core.repository.ActionRepository;
-import com.agon.core.repository.PlayerRepository;
 import com.google.inject.Inject;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Set;
 
 public class ActionService {
 
     private final ActionRepository actionRepository;
-    private final PlayerRepository playerRepository;
 
     @Inject
-    public ActionService(ActionRepository actionRepository, PlayerRepository playerRepository) {
+    public ActionService(ActionRepository actionRepository) {
         this.actionRepository = actionRepository;
-        this.playerRepository = playerRepository;
     }
 
-    public ActionResult addAndEvaluateActions(ActionList actions) {
+    public void add(ActionList actions) {
         actionRepository.add(actions.getActions());
-        Collection<Set<Evaluation>> evaluations = buildEvaluations(actions);
-        for (Set<Evaluation> evaluation : evaluations) {
-            for (Evaluation e : evaluation) {
-                playerRepository.increment(e.getPlayerId(), e.getEvent(), e.getCount());
-            }
-        }
-        return null;
     }
 
-    private Collection<Set<Evaluation>> buildEvaluations(ActionList actions) {
+    public Collection<Set<Evaluation>> buildEvaluations(ActionList actions) {
         Hashtable<Long, Set<Evaluation>> evaluations = new Hashtable<>();
 
         for (Action action : actions.getActions()) {
             Set<Evaluation> evals = evaluations.get(action.getPlayerId());
-            if(evals == null) {
+            if (evals == null) {
                 evals = new HashSet<>();
                 evals.add(new Evaluation.Builder()
                         .event(action.getEvent())
@@ -65,7 +57,7 @@ public class ActionService {
             }
 
             for (Evaluation eval : evals) {
-                if(eval.getEvent().equals(action.getEvent())) {
+                if (eval.getEvent().equals(action.getEvent())) {
                     eval.incrementCount();
                 }
             }

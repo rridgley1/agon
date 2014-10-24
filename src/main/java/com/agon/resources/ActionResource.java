@@ -19,6 +19,8 @@
 package com.agon.resources;
 
 import com.agon.core.domain.ActionList;
+import com.agon.core.domain.ActionResult;
+import com.agon.core.service.AchievementService;
 import com.agon.core.service.ActionService;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
@@ -36,18 +38,24 @@ import javax.ws.rs.core.Response;
 public class ActionResource {
 
     private final ActionService actionService;
+    private final AchievementService achievementService;
 
     @Inject
-    public ActionResource(ActionService actionService) {
+    public ActionResource(ActionService actionService, AchievementService achievementService) {
         this.actionService = actionService;
+        this.achievementService = achievementService;
     }
 
     @POST
     @Timed
     public Response post(ActionList actions) {
-        actionService.addAndEvaluateActions(actions);
-        // load achievements that have rules with events just received and increment each player
-        return Response.ok().build();
+        //add all the actions to the db
+        actionService.add(actions);
+        ActionResult results = achievementService.evaluate(actionService.buildEvaluations(actions));
+
+        // load achievements that have rules with events just received and incrementEvent each player
+        return Response.ok().entity(results).build();
     }
+
 
 }

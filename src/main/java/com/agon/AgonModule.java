@@ -22,6 +22,7 @@ import com.agon.core.repository.ActionRepository;
 import com.agon.core.repository.PlayerRepository;
 import com.agon.core.repository.cassandra.CassandraActionRepository;
 import com.agon.core.repository.cassandra.CassandraPlayerRepository;
+import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -46,6 +47,12 @@ public class AgonModule extends AbstractModule {
     @Provides
     @LazySingleton
     public Cluster provideCluster(AgonConfiguration configuration, Environment environment) {
-        return  configuration.getCassandraFactory().build(environment);
+        return configuration.getCassandraFactory().build(environment);
+    }
+
+    @Provides
+    @Named("metrics")
+    public MetricRegistry provideRegistry(Environment environment) {
+        return environment.metrics();
     }
 }

@@ -18,6 +18,6 @@
 
 package com.agon.core.repository;
 
-public interface PlayerRepository  {
-    void increment(long playerId, String event, long count);
+public interface PlayerRepository {
+    void incrementEvent(long playerId, String event, long count);
 }

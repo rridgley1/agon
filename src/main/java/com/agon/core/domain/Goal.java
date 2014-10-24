@@ -22,41 +22,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-@JsonDeserialize(builder = Action.Builder.class)
-public class Action {
-    @JsonProperty
-    private long playerId;
+@JsonDeserialize(builder = Goal.Builder.class)
+public class Goal {
     @JsonProperty
     private String event;
     @JsonProperty
-    private String eventType;
+    private long value;
     @JsonProperty
-    private String value;
-    @JsonProperty
-    private String location;
+    private String type;
 
-    private Action(Builder builder) {
-        playerId = builder.playerId;
+    private Goal(Builder builder) {
         event = builder.event;
-        eventType = builder.eventType;
         value = builder.value;
-        location = builder.location;
+        type = builder.type;
     }
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static final class Builder {
-        private long playerId;
         private String event;
-        private String eventType;
-        private String value;
-        private String location;
+        private long value;
+        private String type;
 
         public Builder() {
-        }
-
-        public Builder playerId(long playerId) {
-            this.playerId = playerId;
-            return this;
         }
 
         public Builder event(String event) {
@@ -64,43 +51,30 @@ public class Action {
             return this;
         }
 
-        public Builder eventType(String eventType) {
-            this.eventType = eventType;
-            return this;
-        }
-
-        public Builder value(String value) {
+        public Builder value(long value) {
             this.value = value;
             return this;
         }
 
-        public Builder location(String location) {
-            this.location = location;
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
-        public Action build() {
-            return new Action(this);
+        public Goal build() {
+            return new Goal(this);
         }
-    }
-
-    public long getPlayerId() {
-        return playerId;
     }
 
     public String getEvent() {
         return event;
     }
 
-    public String getEventType() {
-        return eventType;
-    }
-
-    public String getValue() {
+    public long getValue() {
         return value;
     }
 
-    public String getLocation() {
-        return location;
+    public String getType() {
+        return type;
     }
 }

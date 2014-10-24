@@ -18,20 +18,24 @@
 
 package com.agon.core.domain;
 
-import java.util.List;
+import java.util.Date;
+import java.util.UUID;
 
-public class Result {
+public class PlayerBadge {
     private long playerId;
-    private List<Badge> badges;
+    private Date unlocked;
+    private UUID badgeId;
 
-    private Result(Builder builder) {
+    private PlayerBadge(Builder builder) {
         playerId = builder.playerId;
-        badges = builder.badges;
+        unlocked = builder.unlocked;
+        badgeId = builder.badgeId;
     }
 
     public static final class Builder {
         private long playerId;
-        private List<Badge> badges;
+        private Date unlocked;
+        private UUID badgeId;
 
         public Builder() {
         }
@@ -41,13 +45,18 @@ public class Result {
             return this;
         }
 
-        public Builder badges(List<Badge> badges) {
-            this.badges = badges;
+        public Builder unlocked(Date unlocked) {
+            this.unlocked = unlocked;
             return this;
         }
 
-        public Result build() {
-            return new Result(this);
+        public Builder badgeId(UUID badgeId) {
+            this.badgeId = badgeId;
+            return this;
+        }
+
+        public PlayerBadge build() {
+            return new PlayerBadge(this);
         }
     }
 
@@ -55,7 +64,11 @@ public class Result {
         return playerId;
     }
 
-    public List<Badge> getBadges() {
-        return badges;
+    public Date getUnlocked() {
+        return unlocked;
+    }
+
+    public UUID getBadgeId() {
+        return badgeId;
     }
 }
