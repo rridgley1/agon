@@ -18,19 +18,15 @@
 
 package com.agon.core.repository;
 
+import com.agon.core.domain.Badge;
+import com.agon.core.domain.Goal;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-public interface CrudRepository<T> {
-    void add(T item);
+public interface BadgeRepository extends CrudRepository<Badge> {
+    public Collection<Badge> findByEvent(String event);
 
-    void add(Collection<T> items);
-
-    void delete(T item);
-
-    void delete(Collection<T> items);
-
-    void update(T item);
-
-    T load(UUID id);
+    public List<Goal> findGoalsByBadgeId(UUID badgeId);
 }

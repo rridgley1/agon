@@ -18,34 +18,39 @@
 
 package com.agon.core.service;
 
-import com.agon.core.domain.ActionResult;
-import com.agon.core.domain.Evaluation;
-import com.agon.core.domain.Result;
+import com.agon.core.domain.*;
+import com.agon.core.repository.BadgeRepository;
 import com.agon.core.repository.PlayerRepository;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AchievementService {
     private final PlayerRepository playerRepository;
-
+    private final BadgeRepository badgeRepository;
     @Inject
-    public AchievementService(PlayerRepository playerRepository) {
+    public AchievementService(PlayerRepository playerRepository, BadgeRepository badgeRepository) {
         this.playerRepository = playerRepository;
+        this.badgeRepository = badgeRepository;
     }
 
-    public ActionResult evaluate(Collection<Set<Evaluation>> evaluations) {
-        List<Result> results = new ArrayList<>();
 
-        for (Set<Evaluation> evaluation : evaluations) {
-            for (Evaluation e : evaluation) {
-                playerRepository.incrementEvent(e.getPlayerId(), e.getEvent(), e.getCount());
-                // evaluate all achievements that use the action event for the player in the evaluation
+    public Result evaluate(Action action) {
+        // get all badges that use event in action
+        // iterate through each achievement and evaluate
+        // if evaluate returns true add badge to player
+        //QueryBuilder.select()
+        Collection<Badge> badges = badgeRepository.findByEvent(action.getEvent());
+        List<Badge> earned = new ArrayList<>();
+
+        for (Badge badge : badges) {
+            boolean unlocked = playerRepository.evaluate(action.getPlayerId(), badge);
+            if(unlocked) {
+                playerRepository.unlockBadge(action.getPlayerId(), badge.getId());
+                earned.add(badge);
             }
         }
-        return new ActionResult.Builder().results(results).build();
+        return new Result.Builder().playerId(action.getPlayerId()).badges(earned).build();
     }
 }

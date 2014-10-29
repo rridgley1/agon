@@ -19,8 +19,10 @@
 package com.agon;
 
 import com.agon.core.repository.ActionRepository;
+import com.agon.core.repository.BadgeRepository;
 import com.agon.core.repository.PlayerRepository;
 import com.agon.core.repository.cassandra.CassandraActionRepository;
+import com.agon.core.repository.cassandra.CassandraBadgeRepository;
 import com.agon.core.repository.cassandra.CassandraPlayerRepository;
 import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
@@ -36,6 +38,7 @@ public class AgonModule extends AbstractModule {
     protected void configure() {
         bind(ActionRepository.class).to(CassandraActionRepository.class);
         bind(PlayerRepository.class).to(CassandraPlayerRepository.class);
+        bind(BadgeRepository.class).to(CassandraBadgeRepository.class);
     }
 
     @Provides

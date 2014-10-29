@@ -18,14 +18,22 @@
 
 package com.agon.core.repository.cassandra;
 
+import com.agon.core.domain.Badge;
+import com.agon.core.domain.Goal;
 import com.agon.core.repository.PlayerRepository;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Update;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 
 public class CassandraPlayerRepository implements PlayerRepository {
@@ -45,7 +53,47 @@ public class CassandraPlayerRepository implements PlayerRepository {
         Update updateStatement = QueryBuilder.update("player_event_counts");
         updateStatement.where(QueryBuilder.eq("player_id", playerId)).and(QueryBuilder.eq("event", event));
         updateStatement.with(QueryBuilder.incr("counter_value", count));
+        session.execute(updateStatement);
+    }
 
-        ResultSet resultSet = session.execute(updateStatement);
+    @Override
+    public void unlockBadge(long playerId, UUID badgeId) {
+        Insert insertStatement = QueryBuilder.insertInto(keyspace, "player_badges")
+                .value("player_id", playerId)
+                .value("badge_id", badgeId)
+                .value("unlocked", new Date());
+        session.execute(insertStatement);
+    }
+
+    @Override
+    public boolean hasEarned(long playerId, UUID badgeId) {
+        Select.Where earned = QueryBuilder.select()
+                .all()
+                .from("player_badges")
+                .where(QueryBuilder.eq("player_id", playerId))
+                .and(QueryBuilder.eq("badge_id", badgeId));
+        ResultSet set = session.execute(earned);
+        return !set.isExhausted();
+    }
+
+    @Override
+    public boolean evaluate(long playerId, Badge badge) {
+        if(hasEarned(playerId, badge.getId())) return false;
+
+        Select.Where eval = QueryBuilder.select().from("player_event_counts").where();
+
+        //todo : figure out the where clause here for multiple events
+        for (Goal goal : badge.getGoals()) {
+            eval.and(QueryBuilder.gt("count", goal.getValue()))
+            .and(QueryBuilder.eq("event", goal.getEvent()));
+        }
+
+        ResultSet resultSet = session.execute(eval);
+        return !resultSet.isExhausted();
+    }
+
+    @Override
+    public List<Badge> earnedBadges(long playerId) {
+        return null;
     }
 }

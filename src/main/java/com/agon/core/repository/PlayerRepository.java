@@ -18,6 +18,19 @@
 
 package com.agon.core.repository;
 
+import com.agon.core.domain.Badge;
+
+import java.util.List;
+import java.util.UUID;
+
 public interface PlayerRepository {
     void incrementEvent(long playerId, String event, long count);
+
+    void unlockBadge(long playerId, UUID badgeId);
+
+    boolean hasEarned(long playerId, UUID badgeId);
+
+    boolean evaluate(long playerId, Badge badge);
+
+    List<Badge> earnedBadges(long playerId);
 }

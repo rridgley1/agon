@@ -21,12 +21,23 @@ CREATE TABLE player_event_counts
 CREATE TABLE badges
 (
   id UUID,
+  parent UUID,
   name varchar,
   url varchar,
   description varchar,
   retired boolean,
   primary key (id, name)
 );
+
+CREATE TABLE badge_events
+(
+  event varchar,
+  count int,
+  badge_id UUID,
+  primary key (badge_id)
+);
+
+CREATE INDEX evt ON badge_events(event);
 
 CREATE TABLE player_badges
 (
@@ -35,3 +46,7 @@ CREATE TABLE player_badges
   unlocked timestamp,
   primary key (player_id, badge_id)
 );
+
+insert into badges (id, name, url, retired) values (uuid(), 'max bet badge', '/images/badge.jpg',false);
+
+insert into badge_events (event, count, badge_id) values('MAX_BET', 10, 'ccf0270f-16a5-44b1-b98c-66add2ae55f2');

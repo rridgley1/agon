@@ -18,8 +18,7 @@
 
 package com.agon.resources;
 
-import com.agon.core.domain.ActionList;
-import com.agon.core.domain.ActionResult;
+import com.agon.core.domain.*;
 import com.agon.core.service.AchievementService;
 import com.agon.core.service.ActionService;
 import com.codahale.metrics.annotation.Timed;
@@ -31,6 +30,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @Path("/actions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -49,13 +52,17 @@ public class ActionResource {
     @POST
     @Timed
     public Response post(ActionList actions) {
-        //add all the actions to the db
-        actionService.add(actions);
-        ActionResult results = achievementService.evaluate(actionService.buildEvaluations(actions));
+        //batchAdd all the actions to the db
+        actionService.batchAdd(actions);
+        List<Result> results = new ArrayList<>();
 
-        // load achievements that have rules with events just received and incrementEvent each player
-        return Response.ok().entity(results).build();
+        for (Action action : actions.getActions()) {
+            actionService.increment(action);
+            Result result = achievementService.evaluate(action);
+            if(result != null) {
+                results.add(result);
+            }
+        }
+        return Response.ok().entity(new ActionResult.Builder().results(results).build()).build();
     }
-
-
 }
