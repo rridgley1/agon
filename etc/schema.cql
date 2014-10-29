@@ -15,7 +15,7 @@ CREATE TABLE player_event_counts
   counter_value counter,
   player_id int,
   event varchar,
-  PRIMARY KEY (player_id, event)
+  PRIMARY KEY (player_id, event, counter_value)
 );
 
 CREATE TABLE badges
@@ -34,7 +34,7 @@ CREATE TABLE badge_events
   event varchar,
   count int,
   badge_id UUID,
-  primary key (badge_id)
+  primary key (badge_id, event)
 );
 
 CREATE INDEX evt ON badge_events(event);

@@ -23,6 +23,7 @@ import com.agon.core.domain.Goal;
 import com.agon.core.repository.PlayerRepository;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -79,17 +80,24 @@ public class CassandraPlayerRepository implements PlayerRepository {
     @Override
     public boolean evaluate(long playerId, Badge badge) {
         if(hasEarned(playerId, badge.getId())) return false;
-
-        Select.Where eval = QueryBuilder.select().from("player_event_counts").where();
-
+        int goalsAchieved = 0;
         //todo : figure out the where clause here for multiple events
         for (Goal goal : badge.getGoals()) {
-            eval.and(QueryBuilder.gt("count", goal.getValue()))
-            .and(QueryBuilder.eq("event", goal.getEvent()));
-        }
+            Select.Where eval = QueryBuilder.select().all()
+                    .from("player_event_counts")
+                    .where(QueryBuilder.eq("player_id", playerId))
+                    .and(QueryBuilder.eq("event", goal.getEvent()));
 
-        ResultSet resultSet = session.execute(eval);
-        return !resultSet.isExhausted();
+            ResultSet resultSet = session.execute(eval);
+            Row row = resultSet.one();
+            if(row != null) {
+                long count = row.getLong("counter_value");
+                if(count >= goal.getValue() ) {
+                    goalsAchieved++;
+                }
+            }
+        }
+        return goalsAchieved == badge.getGoals().size();
     }
 
     @Override

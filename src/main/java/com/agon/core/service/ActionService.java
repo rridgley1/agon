@@ -52,4 +52,37 @@ public class ActionService {
     public void increment(Action action) {
         playerRepository.incrementEvent(action.getPlayerId(), action.getEvent(), 1);
     }
+
+    public Collection<Set<Evaluation>> buildEvaluations(ActionList actions) {
+        Hashtable<Long, Set<Evaluation>> evaluations = new Hashtable<>();
+
+        for (Action action : actions.getActions()) {
+            Set<Evaluation> evals = evaluations.get(action.getPlayerId());
+            if (evals == null) {
+                evals = new HashSet<>();
+                evals.add(new Evaluation.Builder()
+                        .event(action.getEvent())
+                        .playerId(action.getPlayerId())
+                        .build());
+                evaluations.put(action.getPlayerId(), evals);
+            }
+
+            boolean found = false;
+
+            for (Evaluation eval : evals) {
+                if (eval.getEvent().equals(action.getEvent())) {
+                    eval.incrementCount();
+                    found = true;
+                }
+            }
+
+            if(!found) {
+                evals.add(new Evaluation.Builder()
+                        .event(action.getEvent())
+                .playerId(action.getPlayerId())
+                .count(1).build());
+            }
+        }
+        return evaluations.values();
+    }
 }

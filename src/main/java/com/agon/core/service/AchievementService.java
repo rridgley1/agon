@@ -36,21 +36,33 @@ public class AchievementService {
     }
 
 
-    public Result evaluate(Action action) {
-        // get all badges that use event in action
-        // iterate through each achievement and evaluate
-        // if evaluate returns true add badge to player
-        //QueryBuilder.select()
-        Collection<Badge> badges = badgeRepository.findByEvent(action.getEvent());
-        List<Badge> earned = new ArrayList<>();
+    public ActionResult evaluate(Collection<Set<Evaluation>> evaluations) {
+        List<Result> results = new ArrayList<>();
 
-        for (Badge badge : badges) {
-            boolean unlocked = playerRepository.evaluate(action.getPlayerId(), badge);
-            if(unlocked) {
-                playerRepository.unlockBadge(action.getPlayerId(), badge.getId());
-                earned.add(badge);
+        for (Set<Evaluation> evaluation : evaluations) {
+            List<Badge> earned = new ArrayList<>();
+            long playerId = 0;
+
+            for (Evaluation e : evaluation) {
+                if(playerId == 0) playerId = e.getPlayerId();
+                playerRepository.incrementEvent(e.getPlayerId(), e.getEvent(), e.getCount());
+
+                Collection<Badge> badges = badgeRepository.findByEvent(e.getEvent());
+
+                for (Badge badge : badges) {
+                    boolean unlocked = playerRepository.evaluate(e.getPlayerId(), badge);
+                    if(unlocked) {
+                        playerRepository.unlockBadge(e.getPlayerId(), badge.getId());
+                        earned.add(badge);
+                    }
+                }
+            }
+
+            if(earned.size() > 0) {
+                results.add(new Result.Builder().badges(earned).playerId(playerId).build());
             }
         }
-        return new Result.Builder().playerId(action.getPlayerId()).badges(earned).build();
+
+        return new ActionResult.Builder().results(results).build();
     }
 }
