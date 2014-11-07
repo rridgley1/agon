@@ -21,6 +21,7 @@ package com.agon.resources;
 import com.agon.core.domain.*;
 import com.agon.core.service.AchievementService;
 import com.agon.core.service.ActionService;
+import com.agon.core.versioning.ApiVersion;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
@@ -53,6 +54,7 @@ public class ActionResource {
     @Timed
     @ApiOperation(value = "Post actions to the gamification engine for evaluation",
                   response = ActionResult.class)
+    @ApiVersion(minVersion = 1)
     public Response post(ActionList actions) {
         //batchAdd all the actions to the db
         actionService.batchAdd(actions);

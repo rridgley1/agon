@@ -19,11 +19,17 @@
 package com.agon;
 
 import com.agon.core.guice.GuiceBundle;
+import com.agon.core.versioning.ApiVersionBundle;
 import com.agon.resources.ActionResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerDropwizard;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import java.util.EnumSet;
 
 public class MainApplication extends Application<AgonConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -31,6 +37,7 @@ public class MainApplication extends Application<AgonConfiguration> {
     }
 
     private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
+    private final ApiVersionBundle<AgonConfiguration> apiVersionBundle = new ApiVersionBundle<>();
 
     @Override
     public void initialize(Bootstrap<AgonConfiguration> bootstrap) {
@@ -41,10 +48,18 @@ public class MainApplication extends Application<AgonConfiguration> {
 
         bootstrap.addBundle(guiceBundle);
         swaggerDropwizard.onInitialize(bootstrap);
+        bootstrap.addBundle(apiVersionBundle);
     }
 
     @Override
     public void run(AgonConfiguration configuration, Environment environment) throws Exception {
+        // CORS support
+        FilterRegistration.Dynamic filter = environment.servlets().addFilter("Cross Origin Filter", CrossOriginFilter.class);
+        filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+        filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+        filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Authorization,X-Requested-With,Content-Type,Accept,Origin");
+        filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "OPTIONS,GET,PUT,POST,DELETE,HEAD");
+
         environment.jersey().register(ActionResource.class);
         swaggerDropwizard.onRun(configuration, environment, "localhost");
     }

@@ -15,7 +15,7 @@ CREATE TABLE player_event_counts
   counter_value counter,
   player_id int,
   event varchar,
-  PRIMARY KEY (player_id, event, counter_value)
+  PRIMARY KEY (player_id, event)
 );
 
 CREATE TABLE badges

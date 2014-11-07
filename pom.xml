@@ -21,6 +21,7 @@
         <guice.version>3.0</guice.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <apiversioning.version>1.0</apiversioning.version>
     </properties>
 
     <dependencies>
