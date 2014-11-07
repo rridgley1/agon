@@ -20,15 +20,17 @@ package com.agon;
 
 import com.agon.core.guice.GuiceBundle;
 import com.agon.resources.ActionResource;
-import com.agon.resources.TestResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 
 public class MainApplication extends Application<AgonConfiguration> {
     public static void main(String[] args) throws Exception {
         new MainApplication().run(args);
     }
+
+    private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
 
     @Override
     public void initialize(Bootstrap<AgonConfiguration> bootstrap) {
@@ -38,11 +40,12 @@ public class MainApplication extends Application<AgonConfiguration> {
                 .build();
 
         bootstrap.addBundle(guiceBundle);
+        swaggerDropwizard.onInitialize(bootstrap);
     }
 
     @Override
     public void run(AgonConfiguration configuration, Environment environment) throws Exception {
         environment.jersey().register(ActionResource.class);
-        environment.jersey().register(TestResource.class);
+        swaggerDropwizard.onRun(configuration, environment, "localhost");
     }
 }

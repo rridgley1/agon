@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class CassandraActionRepository implements ActionRepository {
     private final Cluster cluster;
@@ -76,5 +77,10 @@ public class CassandraActionRepository implements ActionRepository {
     @Override
     public void update(Action item) {
 
+    }
+
+    @Override
+    public Action load(UUID id) {
+        return null;
     }
 }

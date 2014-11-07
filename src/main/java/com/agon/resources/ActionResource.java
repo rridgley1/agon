@@ -23,6 +23,8 @@ import com.agon.core.service.AchievementService;
 import com.agon.core.service.ActionService;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -33,6 +35,7 @@ import javax.ws.rs.core.Response;
 import java.util.*;
 
 @Path("/actions")
+@Api(value = "/actions", description = "Operations for actions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ActionResource {
@@ -48,6 +51,8 @@ public class ActionResource {
 
     @POST
     @Timed
+    @ApiOperation(value = "Post actions to the gamification engine for evaluation",
+                  response = ActionResult.class)
     public Response post(ActionList actions) {
         //batchAdd all the actions to the db
         actionService.batchAdd(actions);

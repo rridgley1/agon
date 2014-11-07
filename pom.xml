@@ -60,6 +60,11 @@
             <artifactId>dropwizard-cassandra</artifactId>
             <version>${dropwizard-cassandra.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.federecio</groupId>
+            <artifactId>dropwizard-swagger</artifactId>
+            <version>0.5.1</version>
+        </dependency>
     </dependencies>
 
     <build>
