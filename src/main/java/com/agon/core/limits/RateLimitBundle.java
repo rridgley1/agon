@@ -16,16 +16,21 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.limits;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
+import com.agon.core.versioning.ApiVersionResourceFilterFactory;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+public class RateLimitBundle<T> implements ConfiguredBundle<T> {
 
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+    @Override
+    public void run(T configuration, Environment environment) throws Exception {
+        environment.jersey().getResourceConfig().getResourceFilterFactories().add(new RateLimiterResourceFilterFactory());
+        environment.jersey().getResourceConfig().getContainerResponseFilters().add(new RateLimitResponseFilter());
+    }
+
+    @Override
+    public void initialize(Bootstrap<?> bootstrap) {}
 }

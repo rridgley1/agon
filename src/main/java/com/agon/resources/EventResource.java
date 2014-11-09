@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.agon.core.domain;
+package com.agon.resources;
 
-public class Achievement {
+public class EventResource {
 }

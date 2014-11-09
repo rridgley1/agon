@@ -16,16 +16,18 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.limits;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+public class RateLimitResponseFilter implements ContainerResponseFilter {
+    @Override
+    public ContainerResponse filter(ContainerRequest request, ContainerResponse containerResponse) {
+        containerResponse.getHttpHeaders().putSingle("X-Rate-Limit-Limit", 1000);
+        containerResponse.getHttpHeaders().putSingle("X-Rate-Limit-Remaining", 100);
+        containerResponse.getHttpHeaders().putSingle("X-Rate-Limit-Reset", 1000);
+        return containerResponse;
+    }
 }

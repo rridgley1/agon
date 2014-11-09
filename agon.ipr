@@ -1004,6 +1004,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/argparse4j/argparse4j/0.4.3/argparse4j-0.4.3-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: net.spy:spymemcached:2.10.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/spy/spymemcached/2.10.1/spymemcached-2.10.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/net/spy/spymemcached/2.10.1/spymemcached-2.10.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/net/spy/spymemcached/2.10.1/spymemcached-2.10.1-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: org.apache.xbean:xbean-bundleutils:3.11.1">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/apache/xbean/xbean-bundleutils/3.11.1/xbean-bundleutils-3.11.1.jar!/" />

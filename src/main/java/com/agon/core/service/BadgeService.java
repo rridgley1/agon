@@ -26,11 +26,11 @@ import com.google.inject.Inject;
 
 import java.util.*;
 
-public class AchievementService {
+public class BadgeService {
     private final PlayerRepository playerRepository;
     private final BadgeRepository badgeRepository;
     @Inject
-    public AchievementService(PlayerRepository playerRepository, BadgeRepository badgeRepository) {
+    public BadgeService(PlayerRepository playerRepository, BadgeRepository badgeRepository) {
         this.playerRepository = playerRepository;
         this.badgeRepository = badgeRepository;
     }
@@ -45,12 +45,13 @@ public class AchievementService {
 
             for (Evaluation e : evaluation) {
                 if(playerId == 0) playerId = e.getPlayerId();
-                playerRepository.incrementEvent(e.getPlayerId(), e.getEvent(), e.getCount());
 
+                playerRepository.incrementEvent(e.getPlayerId(), e.getEvent(), e.getCount());
                 Collection<Badge> badges = badgeRepository.findByEvent(e.getEvent());
 
                 for (Badge badge : badges) {
                     boolean unlocked = playerRepository.evaluate(e.getPlayerId(), badge);
+
                     if(unlocked) {
                         playerRepository.unlockBadge(e.getPlayerId(), badge.getId());
                         earned.add(badge);

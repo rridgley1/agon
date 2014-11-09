@@ -19,6 +19,7 @@
 package com.agon.core.repository.cassandra;
 
 import com.agon.core.domain.Action;
+import com.agon.core.domain.Paged;
 import com.agon.core.repository.ActionRepository;
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.Cluster;
@@ -26,10 +27,12 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.UUIDs;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.UUID;
 
 public class CassandraActionRepository implements ActionRepository {
@@ -50,7 +53,7 @@ public class CassandraActionRepository implements ActionRepository {
     }
 
     @Override
-    public void add(Collection<Action> items) {
+    public void addAll(Collection<Action> items) {
         BatchStatement batchStatement = new BatchStatement();
         String[] names = {"player_id", "event", "event_type", "event_time", "value"};
 
@@ -80,7 +83,17 @@ public class CassandraActionRepository implements ActionRepository {
     }
 
     @Override
-    public Action load(UUID id) {
+    public Optional<Action> get(UUID id) {
+        return null;
+    }
+
+    @Override
+    public Iterator<Action> getAll(Optional<Integer> limit) {
+        return null;
+    }
+
+    @Override
+    public Paged<Action> getAllPaged(Long startToken, Integer limit) {
         return null;
     }
 }

@@ -18,14 +18,7 @@
 
 package com.agon.core.repository;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
+import com.agon.core.domain.Event;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+public interface EventRepository extends CrudRepository<Event> {
 }

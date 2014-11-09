@@ -19,8 +19,11 @@
 package com.agon;
 
 import com.agon.core.guice.GuiceBundle;
+import com.agon.core.limits.RateLimitBundle;
+import com.agon.core.limits.RateLimitExceededExceptionMapper;
+import com.agon.core.limits.RateLimitResponseFilter;
 import com.agon.core.versioning.ApiVersionBundle;
-import com.agon.resources.ActionResource;
+import com.agon.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -38,6 +41,7 @@ public class MainApplication extends Application<AgonConfiguration> {
 
     private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
     private final ApiVersionBundle<AgonConfiguration> apiVersionBundle = new ApiVersionBundle<>();
+    private final RateLimitBundle<AgonConfiguration> rateLimitBundle = new RateLimitBundle<>();
 
     @Override
     public void initialize(Bootstrap<AgonConfiguration> bootstrap) {
@@ -49,6 +53,7 @@ public class MainApplication extends Application<AgonConfiguration> {
         bootstrap.addBundle(guiceBundle);
         swaggerDropwizard.onInitialize(bootstrap);
         bootstrap.addBundle(apiVersionBundle);
+        //bootstrap.addBundle(rateLimitBundle);
     }
 
     @Override
@@ -61,6 +66,12 @@ public class MainApplication extends Application<AgonConfiguration> {
         filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "OPTIONS,GET,PUT,POST,DELETE,HEAD");
 
         environment.jersey().register(ActionResource.class);
+        environment.jersey().register(BadgeResource.class);
+        environment.jersey().register(EventResource.class);
+        environment.jersey().register(EventTypeResource.class);
+        environment.jersey().register(OAuthResource.class);
+
+        environment.jersey().register(new RateLimitExceededExceptionMapper());
         swaggerDropwizard.onRun(configuration, environment, "localhost");
     }
 }

@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.limits;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD })
+public @interface Limiter {
+    final int DEFAULT_REQUESTS_PER_HR = 1000;
+    int requests() default DEFAULT_REQUESTS_PER_HR;
 }

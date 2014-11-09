@@ -22,7 +22,6 @@ import com.agon.core.domain.Action;
 import com.agon.core.domain.ActionList;
 import com.agon.core.domain.Evaluation;
 import com.agon.core.repository.ActionRepository;
-import com.agon.core.repository.PlayerRepository;
 import com.google.inject.Inject;
 
 import java.util.Collection;
@@ -33,24 +32,18 @@ import java.util.Set;
 public class ActionService {
 
     private final ActionRepository actionRepository;
-    private final PlayerRepository playerRepository;
 
     @Inject
-    public ActionService(ActionRepository actionRepository, PlayerRepository playerRepository) {
+    public ActionService(ActionRepository actionRepository) {
         this.actionRepository = actionRepository;
-        this.playerRepository = playerRepository;
     }
 
     public void batchAdd(ActionList actions) {
-        actionRepository.add(actions.getActions());
+        actionRepository.addAll(actions.getActions());
     }
 
     public void add(Action action) {
         actionRepository.add(action);
-    }
-
-    public void increment(Action action) {
-        playerRepository.incrementEvent(action.getPlayerId(), action.getEvent(), 1);
     }
 
     public Collection<Set<Evaluation>> buildEvaluations(ActionList actions) {

@@ -16,29 +16,56 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.repository.cassandra;
 
+import com.agon.core.domain.EventType;
 import com.agon.core.domain.Paged;
+import com.agon.core.repository.EventTypeRepository;
 import com.google.common.base.Optional;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
-public interface CrudRepository<T> {
-    void add(T item);
+public class CassandraEventTypeRepository implements EventTypeRepository {
 
-    void addAll(Collection<T> items);
+    @Override
+    public void add(EventType item) {
 
-    void delete(T item);
+    }
 
-    void delete(Collection<T> items);
+    @Override
+    public void addAll(Collection<EventType> items) {
 
-    void update(T item);
+    }
 
-    Optional<T> get(UUID id);
+    @Override
+    public void delete(EventType item) {
 
-    Iterator<T> getAll(Optional<Integer> limit);
+    }
 
-    Paged<T> getAllPaged(Long startToken, Integer limit);
+    @Override
+    public void delete(Collection<EventType> items) {
+
+    }
+
+    @Override
+    public void update(EventType item) {
+
+    }
+
+    @Override
+    public Optional<EventType> get(UUID id) {
+        return null;
+    }
+
+    @Override
+    public Iterator<EventType> getAll(Optional<Integer> limit) {
+        return null;
+    }
+
+    @Override
+    public Paged<EventType> getAllPaged(Long startToken, Integer limit) {
+        return null;
+    }
 }

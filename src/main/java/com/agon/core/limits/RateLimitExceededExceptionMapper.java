@@ -16,16 +16,18 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.limits;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
+import com.agon.core.exceptions.RateLimitExceededException;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+@Provider
+public class RateLimitExceededExceptionMapper implements ExceptionMapper<RateLimitExceededException> {
+    @Override
+    public Response toResponse(RateLimitExceededException e) {
+        return Response.status(413).build();
+    }
 }

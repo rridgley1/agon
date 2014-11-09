@@ -16,16 +16,7 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.resources;
 
-import com.agon.core.domain.Badge;
-import com.agon.core.domain.Goal;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-public interface BadgeRepository extends CrudRepository<Badge> {
-    public Collection<Badge> findByEvent(String event);
-    public List<Goal> findGoalsByBadgeId(UUID badgeId);
+public class EventTypeResource {
 }

@@ -80,8 +80,9 @@ public class CassandraPlayerRepository implements PlayerRepository {
     @Override
     public boolean evaluate(long playerId, Badge badge) {
         if(hasEarned(playerId, badge.getId())) return false;
+
         int goalsAchieved = 0;
-        //todo : figure out the where clause here for multiple events
+
         for (Goal goal : badge.getGoals()) {
             Select.Where eval = QueryBuilder.select().all()
                     .from("player_event_counts")

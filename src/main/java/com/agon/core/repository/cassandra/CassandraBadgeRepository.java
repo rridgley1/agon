@@ -20,10 +20,15 @@ package com.agon.core.repository.cassandra;
 
 import com.agon.core.domain.Badge;
 import com.agon.core.domain.Goal;
+import com.agon.core.domain.Paged;
 import com.agon.core.repository.BadgeRepository;
-import com.datastax.driver.core.*;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -55,7 +60,7 @@ public class CassandraBadgeRepository implements BadgeRepository {
             UUID badgeId = row.getUUID("badge_id");
 
             if(badges.get(badgeId) == null) {
-                badges.put(badgeId, load(badgeId));
+                badges.put(badgeId, get(badgeId).get());
             }
         }
         return badges.values();
@@ -85,7 +90,7 @@ public class CassandraBadgeRepository implements BadgeRepository {
     }
 
     @Override
-    public void add(Collection<Badge> items) {
+    public void addAll(Collection<Badge> items) {
 
     }
 
@@ -105,7 +110,7 @@ public class CassandraBadgeRepository implements BadgeRepository {
     }
 
     @Override
-    public Badge load(UUID id) {
+    public Optional<Badge> get(UUID id) {
         Select.Where badgeQuery = QueryBuilder
                 .select()
                 .all()
@@ -114,12 +119,22 @@ public class CassandraBadgeRepository implements BadgeRepository {
         ResultSet set = session.execute(badgeQuery);
         Row row = set.one();
 
-        return new Badge.Builder().id(row.getUUID("id"))
+        return Optional.of(new Badge.Builder().id(row.getUUID("id"))
                 .retired(row.getBool("retired"))
                 .description(row.getString("description"))
                 .name(row.getString("name"))
                 .goals(findGoalsByBadgeId(id))
                 .url(row.getString("url"))
-                .build();
+                .build());
+    }
+
+    @Override
+    public Iterator<Badge> getAll(Optional<Integer> limit) {
+        return null;
+    }
+
+    @Override
+    public Paged<Badge> getAllPaged(Long startToken, Integer limit) {
+        return null;
     }
 }
