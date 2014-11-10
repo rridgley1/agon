@@ -22,20 +22,27 @@ import com.agon.core.domain.Action;
 import com.agon.core.domain.ActionList;
 import com.agon.core.domain.Evaluation;
 import com.agon.core.repository.ActionRepository;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.google.inject.Inject;
 
+import javax.inject.Named;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 
+import static com.codahale.metrics.MetricRegistry.name;
+
 public class ActionService {
 
     private final ActionRepository actionRepository;
+    private final Timer timerEval;
 
     @Inject
-    public ActionService(ActionRepository actionRepository) {
+    public ActionService(ActionRepository actionRepository, @Named("metrics") MetricRegistry metricRegistry) {
         this.actionRepository = actionRepository;
+        timerEval = metricRegistry.timer(name(ActionService.class, "buildEvals"));
     }
 
     public void batchAdd(ActionList actions) {
@@ -47,35 +54,41 @@ public class ActionService {
     }
 
     public Collection<Set<Evaluation>> buildEvaluations(ActionList actions) {
-        Hashtable<Long, Set<Evaluation>> evaluations = new Hashtable<>();
+        final Timer.Context timerContext = timerEval.time();
 
-        for (Action action : actions.getActions()) {
-            Set<Evaluation> evals = evaluations.get(action.getPlayerId());
-            if (evals == null) {
-                evals = new HashSet<>();
-                evals.add(new Evaluation.Builder()
-                        .event(action.getEvent())
-                        .playerId(action.getPlayerId())
-                        .build());
-                evaluations.put(action.getPlayerId(), evals);
-            }
+        try {
+            Hashtable<Long, Set<Evaluation>> evaluations = new Hashtable<>();
 
-            boolean found = false;
+            for (Action action : actions.getActions()) {
+                Set<Evaluation> evals = evaluations.get(action.getPlayerId());
+                if (evals == null) {
+                    evals = new HashSet<>();
+                    evals.add(new Evaluation.Builder()
+                            .event(action.getEvent())
+                            .playerId(action.getPlayerId())
+                            .build());
+                    evaluations.put(action.getPlayerId(), evals);
+                }
 
-            for (Evaluation eval : evals) {
-                if (eval.getEvent().equals(action.getEvent())) {
-                    eval.incrementCount();
-                    found = true;
+                boolean found = false;
+
+                for (Evaluation eval : evals) {
+                    if (eval.getEvent().equals(action.getEvent())) {
+                        eval.incrementCount();
+                        found = true;
+                    }
+                }
+
+                if(!found) {
+                    evals.add(new Evaluation.Builder()
+                            .event(action.getEvent())
+                    .playerId(action.getPlayerId())
+                    .count(1).build());
                 }
             }
-
-            if(!found) {
-                evals.add(new Evaluation.Builder()
-                        .event(action.getEvent())
-                .playerId(action.getPlayerId())
-                .count(1).build());
-            }
+            return evaluations.values();
+        } finally {
+            timerContext.stop();
         }
-        return evaluations.values();
     }
 }

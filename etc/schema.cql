@@ -29,6 +29,8 @@ CREATE TABLE badges
   primary key (id, name)
 );
 
+CREATE INDEX badge_name ON badges(name);
+
 CREATE TABLE badge_events
 (
   event varchar,

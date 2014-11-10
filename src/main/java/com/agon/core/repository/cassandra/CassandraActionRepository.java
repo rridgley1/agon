@@ -21,6 +21,7 @@ package com.agon.core.repository.cassandra;
 import com.agon.core.domain.Action;
 import com.agon.core.domain.Paged;
 import com.agon.core.repository.ActionRepository;
+import com.codahale.metrics.annotation.Timed;
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -36,15 +37,11 @@ import java.util.Iterator;
 import java.util.UUID;
 
 public class CassandraActionRepository implements ActionRepository {
-    private final Cluster cluster;
-    private final String keyspace;
     private final Session session;
 
     @Inject
-    public CassandraActionRepository(Cluster cluster, @Named("keyspace") String keyspace) {
-        this.cluster = cluster;
-        this.keyspace = keyspace;
-        this.session = this.cluster.connect(this.keyspace);
+    public CassandraActionRepository(@Named("agon-session") Session session) {
+        this.session = session;
     }
 
     @Override
@@ -60,7 +57,7 @@ public class CassandraActionRepository implements ActionRepository {
         for (Action a : items) {
             Object[] values = {a.getPlayerId(), a.getEvent(), a.getEventType(), UUIDs.timeBased(), a.getValue()};
             Statement statement = QueryBuilder
-                    .insertInto(keyspace, "actions")
+                    .insertInto(session.getLoggedKeyspace(), "actions")
                     .values(names, values);
             batchStatement.add(statement);
         }

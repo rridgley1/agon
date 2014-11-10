@@ -18,38 +18,44 @@
 
 package com.agon;
 
-import com.agon.core.repository.ActionRepository;
-import com.agon.core.repository.BadgeRepository;
-import com.agon.core.repository.PlayerRepository;
-import com.agon.core.repository.cassandra.CassandraActionRepository;
-import com.agon.core.repository.cassandra.CassandraBadgeRepository;
-import com.agon.core.repository.cassandra.CassandraPlayerRepository;
+import com.agon.core.repository.*;
+import com.agon.core.repository.cassandra.*;
 import com.codahale.metrics.MetricRegistry;
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.netflix.governator.guice.lazy.LazySingleton;
 import io.dropwizard.setup.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AgonModule extends AbstractModule {
+    final Logger logger = LoggerFactory.getLogger(AgonModule.class);
+
     @Override
     protected void configure() {
         bind(ActionRepository.class).to(CassandraActionRepository.class);
         bind(PlayerRepository.class).to(CassandraPlayerRepository.class);
         bind(BadgeRepository.class).to(CassandraBadgeRepository.class);
+        bind(EventRepository.class).to(CassandraEventRepository.class);
+        bind(EventTypeRepository.class).to(CassandraEventTypeRepository.class);
     }
 
     @Provides
-    @Named("keyspace")
-    public String provideKeyspace(AgonConfiguration configuration) {
-        return configuration.getCassandraFactory().getKeyspace();
+    @Named("agon-session")
+    @LazySingleton
+    public Session provideSession(Cluster cluster, AgonConfiguration configuration) {
+        logger.info("getting session");
+        return cluster.connect(configuration.getCassandraFactory().getKeyspace());
     }
 
     @Provides
     @LazySingleton
     public Cluster provideCluster(AgonConfiguration configuration, Environment environment) {
+        logger.info("getting cluster");
         return configuration.getCassandraFactory().build(environment);
     }
 

@@ -55,11 +55,10 @@ public class ActionResource {
     @ApiOperation(value = "Post actions to the gamification engine for evaluation",
                   response = ActionResult.class)
     @ApiVersion(minVersion = 1)
-    @Limiter(requests = 1000)
+    //@Limiter(requests = 1000)
     public Response post(ActionList actions) {
         //batchAdd all the actions to the db
         actionService.batchAdd(actions);
-
         return Response.ok().entity(
                 badgeService.evaluate(
                         actionService.buildEvaluations(actions)))

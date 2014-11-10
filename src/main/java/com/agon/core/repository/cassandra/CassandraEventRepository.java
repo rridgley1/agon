@@ -21,13 +21,23 @@ package com.agon.core.repository.cassandra;
 import com.agon.core.domain.Event;
 import com.agon.core.domain.Paged;
 import com.agon.core.repository.EventRepository;
+import com.datastax.driver.core.Session;
 import com.google.common.base.Optional;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 
 public class CassandraEventRepository implements EventRepository {
+    private final Session session;
+
+    @Inject
+    public CassandraEventRepository(@Named("agon-session") Session session) {
+        this.session = session;
+    }
+
     @Override
     public void add(Event item) {
 

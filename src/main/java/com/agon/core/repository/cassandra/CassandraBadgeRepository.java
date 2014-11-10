@@ -35,15 +35,11 @@ import com.google.inject.name.Named;
 import java.util.*;
 
 public class CassandraBadgeRepository implements BadgeRepository {
-    private final Cluster cluster;
-    private final String keyspace;
     private final Session session;
 
     @Inject
-    public CassandraBadgeRepository(Cluster cluster, @Named("keyspace") String keyspace) {
-        this.cluster = cluster;
-        this.keyspace = keyspace;
-        this.session = this.cluster.connect(this.keyspace);
+    public CassandraBadgeRepository(@Named("agon-session") Session session) {
+        this.session = session;
     }
 
     @Override

@@ -21,7 +21,6 @@ package com.agon.core.repository.cassandra;
 import com.agon.core.domain.Badge;
 import com.agon.core.domain.Goal;
 import com.agon.core.repository.PlayerRepository;
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
@@ -38,15 +37,11 @@ import java.util.UUID;
 
 
 public class CassandraPlayerRepository implements PlayerRepository {
-    private final Cluster cluster;
-    private final String keyspace;
     private final Session session;
 
     @Inject
-    public CassandraPlayerRepository(Cluster cluster, @Named("keyspace") String keyspace) {
-        this.cluster = cluster;
-        this.keyspace = keyspace;
-        session = this.cluster.connect(this.keyspace);
+    public CassandraPlayerRepository(@Named("agon-session") Session session) {
+        this.session = session;
     }
 
     @Override
@@ -59,7 +54,7 @@ public class CassandraPlayerRepository implements PlayerRepository {
 
     @Override
     public void unlockBadge(long playerId, UUID badgeId) {
-        Insert insertStatement = QueryBuilder.insertInto(keyspace, "player_badges")
+        Insert insertStatement = QueryBuilder.insertInto(session.getLoggedKeyspace(), "player_badges")
                 .value("player_id", playerId)
                 .value("badge_id", badgeId)
                 .value("unlocked", new Date());
