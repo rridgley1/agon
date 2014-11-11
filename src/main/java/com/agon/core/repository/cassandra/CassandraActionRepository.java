@@ -19,59 +19,67 @@
 package com.agon.core.repository.cassandra;
 
 import com.agon.core.domain.Action;
-import com.agon.core.domain.Paged;
 import com.agon.core.repository.ActionRepository;
-import com.codahale.metrics.annotation.Timed;
 import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.netflix.governator.guice.lazy.LazySingleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.UUID;
 
+@LazySingleton
 public class CassandraActionRepository implements ActionRepository {
+    private final Logger log = LoggerFactory.getLogger(CassandraActionRepository.class);
     private final Session session;
+    private static final String insert = "insert into agon.actions (player_id, event, event_type, event_time, value) values (?, ?, ?, ?, ?);";
+    private final PreparedStatement insertStatement;
 
     @Inject
     public CassandraActionRepository(@Named("agon-session") Session session) {
         this.session = session;
+        insertStatement = session.prepare(insert);
     }
 
     @Override
-    public void add(Action item) {
-
+    public void add(Action a) {
+        BoundStatement statement = new BoundStatement(insertStatement);
+        statement.bind(a.getPlayerId(), a.getEvent(), a.getEventType(), UUIDs.timeBased(), a.getValue());
+        session.execute(statement);
     }
 
     @Override
     public void addAll(Collection<Action> items) {
-        BatchStatement batchStatement = new BatchStatement();
-        String[] names = {"player_id", "event", "event_type", "event_time", "value"};
+        try {
+            BatchStatement batchStatement = new BatchStatement();
 
-        for (Action a : items) {
-            Object[] values = {a.getPlayerId(), a.getEvent(), a.getEventType(), UUIDs.timeBased(), a.getValue()};
-            Statement statement = QueryBuilder
-                    .insertInto(session.getLoggedKeyspace(), "actions")
-                    .values(names, values);
-            batchStatement.add(statement);
+            for (Action a : items) {
+                BoundStatement statement = new BoundStatement(insertStatement);
+                statement.bind(a.getPlayerId(), a.getEvent(), a.getEventType(), UUIDs.timeBased(), a.getValue());
+                batchStatement.add(statement);
+            }
+            session.execute(batchStatement);
+        } catch (Exception e) {
+            log.error("Could not execute batch", e);
         }
-        session.execute(batchStatement);
     }
 
     @Override
     public void delete(Action item) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(Collection<Action> items) {
-
+        throw new NotImplementedException();
     }
 
     @Override
@@ -81,16 +89,6 @@ public class CassandraActionRepository implements ActionRepository {
 
     @Override
     public Optional<Action> get(UUID id) {
-        return null;
-    }
-
-    @Override
-    public Iterator<Action> getAll(Optional<Integer> limit) {
-        return null;
-    }
-
-    @Override
-    public Paged<Action> getAllPaged(Long startToken, Integer limit) {
         return null;
     }
 }

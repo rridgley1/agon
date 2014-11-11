@@ -19,11 +19,13 @@
 package com.agon.resources;
 
 import com.agon.core.domain.*;
+import com.agon.core.events.ActionListEvent;
 import com.agon.core.limits.Limiter;
 import com.agon.core.service.BadgeService;
 import com.agon.core.service.ActionService;
 import com.agon.core.versioning.ApiVersion;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -43,11 +45,13 @@ public class ActionResource {
 
     private final ActionService actionService;
     private final BadgeService badgeService;
+    private final EventBus bus;
 
     @Inject
-    public ActionResource(ActionService actionService, BadgeService badgeService) {
+    public ActionResource(ActionService actionService, BadgeService badgeService, EventBus bus) {
         this.actionService = actionService;
         this.badgeService = badgeService;
+        this.bus = bus;
     }
 
     @POST
@@ -57,8 +61,9 @@ public class ActionResource {
     @ApiVersion(minVersion = 1)
     //@Limiter(requests = 1000)
     public Response post(ActionList actions) {
-        //batchAdd all the actions to the db
-        actionService.batchAdd(actions);
+        bus.post(new ActionListEvent(actions));
+//        //batchAdd all the actions to the db
+//        actionService.batchAdd(actions);
         return Response.ok().entity(
                 badgeService.evaluate(
                         actionService.buildEvaluations(actions)))

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonDeserialize(builder = Action.Builder.class)
 public class Action {
     @JsonProperty
-    private long playerId;
+    private int playerId;
     @JsonProperty
     private String event;
     @JsonProperty
@@ -45,7 +45,7 @@ public class Action {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static final class Builder {
-        private long playerId;
+        private int playerId;
         private String event;
         private String eventType;
         private String value;
@@ -54,7 +54,7 @@ public class Action {
         public Builder() {
         }
 
-        public Builder playerId(long playerId) {
+        public Builder playerId(int playerId) {
             this.playerId = playerId;
             return this;
         }
@@ -84,7 +84,7 @@ public class Action {
         }
     }
 
-    public long getPlayerId() {
+    public int getPlayerId() {
         return playerId;
     }
 

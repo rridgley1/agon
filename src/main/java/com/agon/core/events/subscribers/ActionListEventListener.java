@@ -16,25 +16,26 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.events.subscribers;
 
-import com.agon.core.domain.Paged;
-import com.google.common.base.Optional;
+import com.agon.core.domain.ActionList;
+import com.agon.core.events.ActionListEvent;
+import com.agon.core.service.ActionService;
+import com.google.common.eventbus.AllowConcurrentEvents;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.UUID;
+public class ActionListEventListener {
+    private final ActionService actionService;
 
-public interface CrudRepository<T> {
-    void add(T item);
+    @Inject
+    public ActionListEventListener(ActionService actionService) {
+        this.actionService = actionService;
+    }
 
-    void addAll(Collection<T> items);
-
-    void delete(T item);
-
-    void delete(Collection<T> items);
-
-    void update(T item);
-
-    Optional<T> get(UUID id);
+    @Subscribe
+    @AllowConcurrentEvents
+    public void handleActionListEvent(ActionListEvent ale) {
+        actionService.batchAdd(ale.getActions());
+    }
 }

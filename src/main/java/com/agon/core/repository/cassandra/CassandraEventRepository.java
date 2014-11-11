@@ -67,14 +67,4 @@ public class CassandraEventRepository implements EventRepository {
     public Optional<Event> get(UUID id) {
         return null;
     }
-
-    @Override
-    public Iterator<Event> getAll(Optional<Integer> limit) {
-        return null;
-    }
-
-    @Override
-    public Paged<Event> getAllPaged(Long startToken, Integer limit) {
-        return null;
-    }
 }

@@ -1,1 +1,8 @@
-ab -n 20000 -c 100 -p post_data -T 'application/json' http://localhost:7070/actions
+# ab command to stress test
+ab -n 5000 -c 10 -p post_data -T 'application/json' -H 'Accepts-Version: 1' http://localhost/actions
+
+#run docker container proxying dw port
+sudo docker run -d -p 10010:7070 2686aab83dec
+
+# execute bash inside docker container
+sudo docker exec -it 06b86e0e1439 bash

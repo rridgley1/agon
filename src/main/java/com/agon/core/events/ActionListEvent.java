@@ -16,25 +16,18 @@
  * limitations under the License.
  */
 
-package com.agon.core.repository;
+package com.agon.core.events;
 
-import com.agon.core.domain.Paged;
-import com.google.common.base.Optional;
+import com.agon.core.domain.ActionList;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.UUID;
+public class ActionListEvent {
+    private final ActionList actions;
 
-public interface CrudRepository<T> {
-    void add(T item);
+    public ActionListEvent(ActionList actions) {
+        this.actions = actions;
+    }
 
-    void addAll(Collection<T> items);
-
-    void delete(T item);
-
-    void delete(Collection<T> items);
-
-    void update(T item);
-
-    Optional<T> get(UUID id);
+    public ActionList getActions() {
+        return actions;
+    }
 }

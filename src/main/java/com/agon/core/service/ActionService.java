@@ -57,7 +57,7 @@ public class ActionService {
         final Timer.Context timerContext = timerEval.time();
 
         try {
-            Hashtable<Long, Set<Evaluation>> evaluations = new Hashtable<>();
+            Hashtable<Integer, Set<Evaluation>> evaluations = new Hashtable<>();
 
             for (Action action : actions.getActions()) {
                 Set<Evaluation> evals = evaluations.get(action.getPlayerId());

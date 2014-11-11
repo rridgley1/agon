@@ -1,0 +1,12 @@
+language: java
+
+jdk:
+   - oraclejdk7
+
+after_success:
+   - mvn clean package
+
+notifications:
+  email:
+      recipients:
+         - randy.ridgley@gmail.com

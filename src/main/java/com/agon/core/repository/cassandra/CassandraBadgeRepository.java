@@ -22,10 +22,7 @@ import com.agon.core.domain.Badge;
 import com.agon.core.domain.Goal;
 import com.agon.core.domain.Paged;
 import com.agon.core.repository.BadgeRepository;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.base.Optional;
@@ -122,15 +119,5 @@ public class CassandraBadgeRepository implements BadgeRepository {
                 .goals(findGoalsByBadgeId(id))
                 .url(row.getString("url"))
                 .build());
-    }
-
-    @Override
-    public Iterator<Badge> getAll(Optional<Integer> limit) {
-        return null;
-    }
-
-    @Override
-    public Paged<Badge> getAllPaged(Long startToken, Integer limit) {
-        return null;
     }
 }

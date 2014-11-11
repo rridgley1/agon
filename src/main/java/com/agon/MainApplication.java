@@ -18,6 +18,7 @@
 
 package com.agon;
 
+import com.agon.core.events.subscribers.ActionListEventListener;
 import com.agon.core.guice.GuiceBundle;
 import com.agon.core.limits.RateLimitBundle;
 import com.agon.core.limits.RateLimitExceededExceptionMapper;
@@ -42,10 +43,11 @@ public class MainApplication extends Application<AgonConfiguration> {
     private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
     private final ApiVersionBundle<AgonConfiguration> apiVersionBundle = new ApiVersionBundle<>();
     private final RateLimitBundle<AgonConfiguration> rateLimitBundle = new RateLimitBundle<>();
+    private GuiceBundle<AgonConfiguration> guiceBundle;
 
     @Override
     public void initialize(Bootstrap<AgonConfiguration> bootstrap) {
-        GuiceBundle<AgonConfiguration> guiceBundle = GuiceBundle.<AgonConfiguration>newBuilder()
+        guiceBundle = GuiceBundle.<AgonConfiguration>newBuilder()
                 .addModule(new AgonModule())
                 .setConfigClass(AgonConfiguration.class)
                 .build();
@@ -58,6 +60,9 @@ public class MainApplication extends Application<AgonConfiguration> {
 
     @Override
     public void run(AgonConfiguration configuration, Environment environment) throws Exception {
+
+        guiceBundle.getInjector().getInstance(ActionListEventListener.class);
+
         // CORS support
         FilterRegistration.Dynamic filter = environment.servlets().addFilter("Cross Origin Filter", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
